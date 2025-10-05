@@ -164,6 +164,12 @@
                             <span>Vegetation Disturbance 2023-2025</span>
                         </label>
                     </div>
+                    <div class="control-item">
+                        <label class="checkbox-wrapper">
+                            <input type="checkbox" id="waterQualityCheckbox" checked>
+                            <span>Water Quality Monitoring</span>
+                        </label>
+                    </div>
                 </div>
 
                 <div class="control-group">
@@ -184,6 +190,28 @@
                         <div class="legend-item">
                             <div class="legend-color" style="background: #ff00ff"></div>
                             <div>Severe Disturbance</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="control-group">
+                    <h3>Water Quality Legend</h3>
+                    <div id="waterLegend">
+                        <div class="legend-item">
+                            <div class="legend-color" style="background: #00ff00"></div>
+                            <div>Safe (≤200 MPN/100mL)</div>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-color" style="background: #ffff00"></div>
+                            <div>Moderate (201-400 MPN/100mL)</div>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-color" style="background: #ff9900"></div>
+                            <div>High (401-1000 MPN/100mL)</div>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-color" style="background: #ff0000"></div>
+                            <div>Very High (>1000 MPN/100mL)</div>
                         </div>
                     </div>
                 </div>
@@ -620,6 +648,95 @@
             }
 
             window._aqiLayer = layer_AQ_Stations;
+        })();
+
+        // Water Quality Monitoring Implementation
+        (function() {
+            var waterQualityData = [
+                {id: 'BEB-01-100', name: 'Vancouver, Third Beach, Station 100', lat: 49.304444, lon: -123.157222, ecoli: 10, date: '2025-09-25 10:27', salinity: 26.9, temp: 16},
+                {id: 'BEB-01-101', name: 'Vancouver, Third Beach, Station 101', lat: 49.303889, lon: -123.156944, ecoli: 20, date: '2025-09-25 10:30', salinity: 26.9, temp: 16},
+                {id: 'BEB-01-102', name: 'Vancouver, Third Beach, Station 102', lat: 49.303333, lon: -123.156667, ecoli: 10, date: '2025-09-25 10:33', salinity: 26.8, temp: 15},
+                {id: 'BEB-02-201', name: 'Vancouver, Second Beach, Station 201', lat: 49.298056, lon: -123.153889, ecoli: 10, date: '2025-09-24 08:09', salinity: 24.9, temp: 15},
+                {id: 'BEB-02-202', name: 'Vancouver, Second Beach, Station 202', lat: 49.297500, lon: -123.153611, ecoli: 10, date: '2025-09-24 08:14', salinity: 24.8, temp: 15},
+                {id: 'BEB-03-303', name: 'Vancouver, English Bay Beach, Station 303', lat: 49.287222, lon: -123.143889, ecoli: 41, date: '2025-09-24 08:34', salinity: 24.7, temp: 16},
+                {id: 'BEB-03-304', name: 'Vancouver, English Bay Beach, Station 304', lat: 49.286667, lon: -123.143333, ecoli: 10, date: '2025-09-24 08:38', salinity: 24.8, temp: 16},
+                {id: 'BEB-03-305', name: 'Vancouver, English Bay Beach, Station 305', lat: 49.286111, lon: -123.142778, ecoli: 20, date: '2025-09-24 08:42', salinity: 25.1, temp: 16},
+                {id: 'BEB-04-401', name: 'Vancouver, Sunset Beach, Station 401', lat: 49.279722, lon: -123.138889, ecoli: 10, date: '2025-09-24 08:55', salinity: 24.7, temp: 16},
+                {id: 'BEB-04-402', name: 'Vancouver, Sunset Beach, Station 402', lat: 49.279167, lon: -123.138333, ecoli: 10, date: '2025-09-24 09:00', salinity: 25.1, temp: 16},
+                {id: 'BEB-04-403', name: 'Vancouver, Sunset Beach, Station 403', lat: 49.278611, lon: -123.137778, ecoli: 10, date: '2025-09-24 09:06', salinity: 24.8, temp: 16},
+                {id: 'BEB-05-501', name: 'Vancouver, Kitsilano Beach, Station 501', lat: 49.276111, lon: -123.155000, ecoli: 10, date: '2025-09-24 08:18', salinity: 24.7, temp: 16},
+                {id: 'BEB-05-501A', name: 'Vancouver, Kitsilano Beach, Station 501A', lat: 49.275833, lon: -123.154722, ecoli: 20, date: '2025-09-24 08:22', salinity: 25.4, temp: 16},
+                {id: 'BEB-05-502', name: 'Vancouver, Kitsilano Beach, Station 502', lat: 49.275556, lon: -123.154444, ecoli: 10, date: '2025-09-24 08:26', salinity: 25.6, temp: 16},
+                {id: 'BEB-05-503', name: 'Vancouver, Kitsilano Beach, Station 503', lat: 49.275278, lon: -123.154167, ecoli: 10, date: '2025-09-24 08:29', salinity: 25.8, temp: 16},
+                {id: 'BEB-09-511', name: 'Vancouver, Kitsilano Point, Station 511', lat: 49.278333, lon: -123.148611, ecoli: 10, date: '2025-09-24 08:47', salinity: 24.6, temp: 16},
+                {id: 'BEB-09-512', name: 'Vancouver, Kitsilano Point, Station 512', lat: 49.277778, lon: -123.148333, ecoli: 41, date: '2025-09-24 08:52', salinity: 24.5, temp: 16},
+                {id: 'BFC-01-16', name: 'Vancouver, West False Creek, Station 16', lat: 49.274167, lon: -123.134722, ecoli: 31, date: '2025-09-24 09:10', salinity: 24.8, temp: 17},
+                {id: 'BFC-01-18', name: 'Vancouver, West False Creek, Station 18', lat: 49.273889, lon: -123.134167, ecoli: 31, date: '2025-09-24 09:28', salinity: 24.8, temp: 17},
+                {id: 'BFC-01-23', name: 'Vancouver, West False Creek, Station 23', lat: 49.273611, lon: -123.133611, ecoli: 31, date: '2025-09-24 09:35', salinity: 24.7, temp: 16},
+                {id: 'BFC-02-20', name: 'Vancouver, East False Creek, Station 20', lat: 49.273611, lon: -123.103611, ecoli: 448, date: '2025-09-24 10:00', salinity: 24.3, temp: 17},
+                {id: 'BFC-02-20A', name: 'Vancouver, East False Creek, Station 20A', lat: 49.273333, lon: -123.103333, ecoli: 1296, date: '2025-09-24 09:45', salinity: 24.1, temp: 17},
+                {id: 'BFC-02-21', name: 'Vancouver, East False Creek, Station 21', lat: 49.273056, lon: -123.103056, ecoli: 1624, date: '2025-09-24 10:26', salinity: 24.0, temp: 17},
+                {id: 'BFC-02-22', name: 'Vancouver, East False Creek, Station 22', lat: 49.272778, lon: -123.102778, ecoli: 4884, date: '2025-09-24 10:35', salinity: 23.5, temp: 18},
+                {id: 'BFC-02-25', name: 'Vancouver, East False Creek, Station 25', lat: 49.272500, lon: -123.102500, ecoli: 414, date: '2025-09-24 10:18', salinity: 24.3, temp: 17},
+                {id: 'BFC-02-26', name: 'Vancouver, East False Creek, Station 26', lat: 49.272222, lon: -123.102222, ecoli: 256, date: '2025-09-24 10:05', salinity: 24.3, temp: 17}
+            ];
+
+            function getWaterQualityColor(ecoli) {
+                if (ecoli <= 200) return '#00ff00';  // Safe
+                if (ecoli <= 400) return '#ffff00';  // Moderate
+                if (ecoli <= 1000) return '#ff9900'; // High
+                return '#ff0000';                     // Very High
+            }
+
+            var waterQualityLayer = L.featureGroup();
+
+            waterQualityData.forEach(function(station) {
+                var color = getWaterQualityColor(station.ecoli);
+                
+                // Create a circular marker
+                var marker = L.circleMarker([station.lat, station.lon], {
+                    radius: 8,
+                    fillColor: color,
+                    color: '#000',
+                    weight: 1,
+                    opacity: 1,
+                    fillOpacity: 0.8
+                });
+
+                // Create popup content
+                var popupContent = 
+                    '<div class="water-quality-popup">' +
+                    '<b>' + station.name + '</b><br/>' +
+                    '<table class="aqi-popup-table">' +
+                    '<tr><td>E. coli:</td><td><b>' + station.ecoli + ' MPN/100mL</b></td></tr>' +
+                    '<tr><td>Date:</td><td>' + station.date + '</td></tr>' +
+                    '<tr><td>Salinity:</td><td>' + station.salinity + ' PPT</td></tr>' +
+                    '<tr><td>Temperature:</td><td>' + station.temp + ' °C</td></tr>' +
+                    '</table>' +
+                    '</div>';
+
+                marker.bindPopup(popupContent);
+                waterQualityLayer.addLayer(marker);
+            });
+
+            // Initialize water quality layer if checkbox is checked
+            var waterQualityCheckbox = document.getElementById('waterQualityCheckbox');
+            if (waterQualityCheckbox && waterQualityCheckbox.checked) {
+                map.addLayer(waterQualityLayer);
+            }
+
+            // Handle checkbox changes
+            if (waterQualityCheckbox) {
+                waterQualityCheckbox.addEventListener('change', function(e) {
+                    if (e.target.checked) {
+                        map.addLayer(waterQualityLayer);
+                    } else {
+                        map.removeLayer(waterQualityLayer);
+                    }
+                });
+            }
+
+            window._waterQualityLayer = waterQualityLayer;
         })();
         </script>
     </body>
