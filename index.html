@@ -94,13 +94,13 @@
         .leaflet-popup-content {
             margin: 5px 5px;
         }
-        #aqiLegend .legend-item {
+        .legend-item {
             display: flex;
             align-items: center;
             margin: 5px 0;
             gap: 8px;
         }
-        #aqiLegend .legend-color {
+        .legend-color {
             width: 20px;
             height: 20px;
             border-radius: 4px;
@@ -163,6 +163,28 @@
                             <input type="checkbox" id="vegCheckbox" checked>
                             <span>Vegetation Disturbance 2023-2025</span>
                         </label>
+                    </div>
+                </div>
+
+                <div class="control-group">
+                    <h3>Vegetation Disturbance Legend</h3>
+                    <div id="vegLegend">
+                        <div class="legend-item">
+                            <div class="legend-color" style="background: #ffff00"></div>
+                            <div>Low Disturbance</div>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-color" style="background: #ff9933"></div>
+                            <div>Moderate Disturbance</div>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-color" style="background: #ff0000"></div>
+                            <div>High Disturbance</div>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-color" style="background: #ff00ff"></div>
+                            <div>Severe Disturbance</div>
+                        </div>
                     </div>
                 </div>
 
