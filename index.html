@@ -559,25 +559,40 @@
             }, 900);
 
             var aqiCheckbox = document.getElementById('aqiCheckbox');
+            
+            function initializeAQILayer() {
+                map.addLayer(layer_AQ_Stations);
+                fetchStationsForBounds(map.getBounds());
+                map.on('moveend zoomend', debouncedFetch);
+                map.on('zoomend', function(){
+                    var show = shouldShowLabel();
+                    Object.keys(stationsIndex).forEach(function(k){
+                        var m = stationsIndex[k];
+                        if (m && m.options) {
+                            m.setIcon(createIcon(m.options.aqi, !show));
+                        }
+                    });
+                });
+            }
+
+            function removeAQILayer() {
+                if (map.hasLayer(layer_AQ_Stations)) map.removeLayer(layer_AQ_Stations);
+                map.off('moveend zoomend', debouncedFetch);
+                map.off('zoomend');
+            }
+
             if (aqiCheckbox) {
+                // Initialize on startup if checkbox is checked
+                if (aqiCheckbox.checked) {
+                    initializeAQILayer();
+                }
+
+                // Handle checkbox changes
                 aqiCheckbox.addEventListener('change', function(e){
                     if (e.target.checked) {
-                        map.addLayer(layer_AQ_Stations);
-                        fetchStationsForBounds(map.getBounds());
-                        map.on('moveend zoomend', debouncedFetch);
-                        map.on('zoomend', function(){
-                            var show = shouldShowLabel();
-                            Object.keys(stationsIndex).forEach(function(k){
-                                var m = stationsIndex[k];
-                                if (m && m.options) {
-                                    m.setIcon(createIcon(m.options.aqi, !show));
-                                }
-                            });
-                        });
+                        initializeAQILayer();
                     } else {
-                        if (map.hasLayer(layer_AQ_Stations)) map.removeLayer(layer_AQ_Stations);
-                        map.off('moveend zoomend', debouncedFetch);
-                        map.off('zoomend');
+                        removeAQILayer();
                     }
                 });
             }
