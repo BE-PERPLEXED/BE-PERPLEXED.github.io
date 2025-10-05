@@ -1,0 +1,589 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="initial-scale=1,user-scalable=no,maximum-scale=1,width=device-width">
+        <meta name="mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <link rel="stylesheet" href="css/leaflet.css">
+        <link rel="stylesheet" href="css/MarkerCluster.css">
+        <link rel="stylesheet" href="css/MarkerCluster.Default.css">
+        <link rel="stylesheet" href="css/L.Control.Layers.Tree.css">
+        <link rel="stylesheet" href="css/qgis2web.css">
+        <link rel="stylesheet" href="css/fontawesome-all.min.css">
+        <link rel="stylesheet" href="css/leaflet.photon.css">
+        <style>
+        html, body {
+            width: 100%;
+            height: 100%;
+            padding: 0;
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f5f5f5;
+        }
+        .dashboard-container {
+            display: grid;
+            grid-template-columns: 300px 1fr;
+            grid-template-rows: 60px 1fr;
+            height: 100vh;
+            width: 100vw;
+        }
+        .dashboard-header {
+            grid-column: 1 / -1;
+            grid-row: 1;
+            background: #2c3e50;
+            color: white;
+            padding: 10px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            z-index: 1000;
+        }
+        .dashboard-header h1 {
+            margin: 0;
+            font-size: 24px;
+        }
+        .dashboard-sidebar {
+            grid-column: 1;
+            grid-row: 2;
+            background: white;
+            padding: 20px;
+            box-shadow: 2px 0 4px rgba(0,0,0,0.1);
+            overflow-y: auto;
+            z-index: 900;
+        }
+        #map {
+            grid-column: 2;
+            grid-row: 2;
+            width: 100%;
+            height: 100%;
+        }
+        .control-group {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+        }
+        .control-group h3 {
+            margin: 0 0 10px 0;
+            color: #2c3e50;
+            font-size: 16px;
+        }
+        .control-item {
+            margin: 10px 0;
+        }
+        .checkbox-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+        }
+        .checkbox-wrapper input[type="checkbox"] {
+            margin: 0;
+            cursor: pointer;
+        }
+        .aqi-popup table {
+            border-collapse: collapse;
+            margin: 5px 0;
+        }
+        .aqi-popup td {
+            padding: 2px 5px;
+        }
+        .leaflet-popup-content {
+            margin: 5px 5px;
+        }
+        #aqiLegend .legend-item {
+            display: flex;
+            align-items: center;
+            margin: 5px 0;
+            gap: 8px;
+        }
+        #aqiLegend .legend-color {
+            width: 20px;
+            height: 20px;
+            border-radius: 4px;
+        }
+        /* Ensure Leaflet controls stay above the dashboard elements */
+        .leaflet-top, .leaflet-bottom {
+            z-index: 1000;
+        }
+        /* AQI Marker Styles */
+        .aqi-marker {
+            display: inline-block;
+            border-radius: 50%;
+            width: 22px;
+            height: 22px;
+            line-height: 22px;
+            text-align: center;
+            color: #fff;
+            font-weight: 600;
+            font-size: 11px;
+            box-shadow: 0 0 0 1px rgba(0,0,0,0.25) inset;
+        }
+        .aqi-marker.small {
+            width: 14px;
+            height: 14px;
+            line-height: 14px;
+            font-size: 9px;
+        }
+        .aqi-div-icon {
+            background: none !important;
+            border: none;
+        }
+        .aqi-sparkline {
+            display: block;
+            width: 100%;
+            height: 160px;
+            max-width: 340px;
+        }
+        </style>
+    </head>
+    <body>
+        <div class="dashboard-container">
+            <header class="dashboard-header">
+                <h1>Vegetation & Air Quality Dashboard</h1>
+                <div class="header-controls">
+                    <!-- Add any header controls here if needed -->
+                </div>
+            </header>
+            
+            <aside class="dashboard-sidebar">
+                <div class="control-group">
+                    <h3>Layers</h3>
+                    <div class="control-item">
+                        <label class="checkbox-wrapper">
+                            <input type="checkbox" id="aqiCheckbox" checked> 
+                            <span>Show AQI Stations</span>
+                        </label>
+                    </div>
+                    <div class="control-item">
+                        <label class="checkbox-wrapper">
+                            <input type="checkbox" id="vegCheckbox" checked>
+                            <span>Vegetation Disturbance 2023-2025</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="control-group">
+                    <h3>AQI Legend</h3>
+                    <div id="aqiLegend">
+                        <!-- AQI legend will be populated here -->
+                    </div>
+                </div>
+            </aside>
+
+            <div id="map">
+            </div>
+        </div>
+
+        <script src="js/qgis2web_expressions.js"></script>
+        <script src="js/leaflet.js"></script>
+        <script src="js/leaflet.rotatedMarker.js"></script>
+        <script src="js/leaflet.pattern.js"></script>
+        <script src="js/leaflet-hash.js"></script>
+        <script src="js/Autolinker.min.js"></script>
+        <script src="js/rbush.min.js"></script>
+        <script src="js/labelgun.min.js"></script>
+        <script src="js/labels.js"></script>
+        <script src="js/leaflet.markercluster.js"></script>
+        <script src="js/leaflet.photon.js"></script>
+        <script>
+        var map = L.map('map', {
+            zoomControl:false, maxZoom:28, minZoom:1
+        }).fitBounds([[48.2973812070689,-124.78366988409563],[49.356283965927084,-122.17699197006353]]);
+        var hash = new L.Hash(map);
+        map.attributionControl.setPrefix('<a href="https://github.com/tomchadwin/qgis2web" target="_blank">qgis2web</a> &middot; <a href="https://leafletjs.com" title="A JS library for interactive maps">Leaflet</a> &middot; <a href="https://qgis.org">QGIS</a>');
+        var autolinker = new Autolinker({truncate: {length: 30, location: 'smart'}});
+        var bounds_group = new L.featureGroup([]);
+        
+        var zoomControl = L.control.zoom({
+            position: 'topleft'
+        }).addTo(map);
+
+        map.createPane('pane_GoogleMaps_0');
+        map.getPane('pane_GoogleMaps_0').style.zIndex = 400;
+        var layer_GoogleMaps_0 = L.tileLayer('https://mt1.google.com/vt/lyrs=m&x={x}&y={y}&z={z}', {
+            pane: 'pane_GoogleMaps_0',
+            opacity: 1.0,
+            attribution: '',
+            minZoom: 1,
+            maxZoom: 28,
+        });
+        layer_GoogleMaps_0;
+        map.addLayer(layer_GoogleMaps_0);
+
+        // Vegetation layers
+        map.createPane('pane_Vegetation255_1');
+        map.getPane('pane_Vegetation255_1').style.zIndex = 401;
+        var img_Vegetation255_1 = 'data/Vegetation255_1.png';
+        var img_bounds_Vegetation255_1 = [[47.757403531262426,-124.36082319774529],[48.75301240235063,-122.86721739003]];
+        var layer_Vegetation255_1 = new L.imageOverlay(img_Vegetation255_1,
+                                              img_bounds_Vegetation255_1,
+                                              {pane: 'pane_Vegetation255_1'});
+        bounds_group.addLayer(layer_Vegetation255_1);
+        map.addLayer(layer_Vegetation255_1);
+
+        map.createPane('pane_Vegetation251_2');
+        map.getPane('pane_Vegetation251_2').style.zIndex = 402;
+        var img_Vegetation251_2 = 'data/Vegetation251_2.png';
+        var img_bounds_Vegetation251_2 = [[48.65702077458387,-124.38572763180647],[49.652722193100786,-122.86478640421983]];
+        var layer_Vegetation251_2 = new L.imageOverlay(img_Vegetation251_2,
+                                              img_bounds_Vegetation251_2,
+                                              {pane: 'pane_Vegetation251_2'});
+        bounds_group.addLayer(layer_Vegetation251_2);
+        map.addLayer(layer_Vegetation251_2);
+
+        map.createPane('pane_Vegetation254_3');
+        map.getPane('pane_Vegetation254_3').style.zIndex = 403;
+        var img_Vegetation254_3 = 'data/Vegetation254_3.png';
+        var img_bounds_Vegetation254_3 = [[49.55480005680557,-123.00028231550787],[50.55229211014782,-121.45067185327326]];
+        var layer_Vegetation254_3 = new L.imageOverlay(img_Vegetation254_3,
+                                              img_bounds_Vegetation254_3,
+                                              {pane: 'pane_Vegetation254_3'});
+        bounds_group.addLayer(layer_Vegetation254_3);
+        map.addLayer(layer_Vegetation254_3);
+
+        map.createPane('pane_Vegetation253_4');
+        map.getPane('pane_Vegetation253_4').style.zIndex = 404;
+        var img_Vegetation253_4 = 'data/Vegetation253_4.png';
+        var img_bounds_Vegetation253_4 = [[47.755818645335935,-123.00027209589379],[48.75301300400098,-121.50673052443089]];
+        var layer_Vegetation253_4 = new L.imageOverlay(img_Vegetation253_4,
+                                              img_bounds_Vegetation253_4,
+                                              {pane: 'pane_Vegetation253_4'});
+        bounds_group.addLayer(layer_Vegetation253_4);
+        map.addLayer(layer_Vegetation253_4);
+
+        map.createPane('pane_Vegetation252_5');
+        map.getPane('pane_Vegetation252_5').style.zIndex = 405;
+        var img_Vegetation252_5 = 'data/Vegetation252_5.png';
+        var img_bounds_Vegetation252_5 = [[48.65538534829699,-123.00027707744741],[49.65272281402923,-121.47940434628346]];
+        var layer_Vegetation252_5 = new L.imageOverlay(img_Vegetation252_5,
+                                              img_bounds_Vegetation252_5,
+                                              {pane: 'pane_Vegetation252_5'});
+        bounds_group.addLayer(layer_Vegetation252_5);
+        map.addLayer(layer_Vegetation252_5);
+
+        L.ImageOverlay.include({
+            getBounds: function () {
+                return this._bounds;
+            }
+        });
+
+        // Group vegetation layers
+        var vegLayers = [
+            layer_Vegetation251_2,
+            layer_Vegetation252_5,
+            layer_Vegetation253_4,
+            layer_Vegetation254_3,
+            layer_Vegetation255_1
+        ];
+
+        var vegCheckbox = document.getElementById('vegCheckbox');
+        if (vegCheckbox) {
+            vegCheckbox.addEventListener('change', function(e) {
+                var checked = e.target.checked;
+                vegLayers.forEach(function(l) {
+                    if (checked) {
+                        if (!map.hasLayer(l)) {
+                            map.addLayer(l);
+                        }
+                    } else {
+                        if (map.hasLayer(l)) {
+                            map.removeLayer(l);
+                        }
+                    }
+                });
+            });
+        }
+
+        // --- AQI station markers (live WAQI integration) ---
+        (function() {
+            var WAQI_TOKEN = '774c2aa1737729ce4813ea97add2b62040082756';
+
+            function aqiColor(aqi) {
+                if (aqi == null || isNaN(aqi)) return '#999';
+                aqi = Number(aqi);
+                if (aqi <= 50) return '#009966'; // Good - green
+                if (aqi <= 100) return '#ffde33'; // Moderate - yellow
+                if (aqi <= 150) return '#ff9933'; // Unhealthy for sensitive - orange
+                if (aqi <= 200) return '#cc0033'; // Unhealthy - red
+                if (aqi <= 300) return '#660099'; // Very Unhealthy - purple
+                return '#7e0023'; // Hazardous - maroon
+            }
+
+            // Update AQI Legend
+            var aqiLegend = document.getElementById('aqiLegend');
+            if (aqiLegend) {
+                var legendData = [
+                    { color: '#009966', label: 'Good (0-50)' },
+                    { color: '#ffde33', label: 'Moderate (51-100)' },
+                    { color: '#ff9933', label: 'Unhealthy for Sensitive Groups (101-150)' },
+                    { color: '#cc0033', label: 'Unhealthy (151-200)' },
+                    { color: '#660099', label: 'Very Unhealthy (201-300)' },
+                    { color: '#7e0023', label: 'Hazardous (300+)' }
+                ];
+                
+                legendData.forEach(function(item) {
+                    var div = document.createElement('div');
+                    div.className = 'legend-item';
+                    div.innerHTML = 
+                        '<div class="legend-color" style="background:' + item.color + '"></div>' +
+                        '<div>' + item.label + '</div>';
+                    aqiLegend.appendChild(div);
+                });
+            }
+
+            function makeSparklineSVG(values, w, h) {
+                if (!values || values.length === 0) return '';
+                w = w || 340; h = h || 80;
+                
+                // Set margins to accommodate labels
+                var left = 12, right = 4, top = 4, bottom = 8;
+                var chartW = w - left - right;
+                var chartH = h - top - bottom;
+                
+                // Get actual value range and round to nice numbers
+                var minVal = Math.floor(Math.min.apply(null, values));
+                var maxVal = Math.ceil(Math.max.apply(null, values));
+                
+                // If all values are the same, create a small range around it
+                if (minVal === maxVal) {
+                    var val = minVal;
+                    minVal = Math.max(0, val - 5);
+                    maxVal = val + 5;
+                }
+                
+                // Ensure proper range for y-axis
+                var range = maxVal - minVal;
+                
+                // Generate points with proper y-axis orientation (origin at bottom)
+                var points = values.map(function(v, i) {
+                    var x = left + i * (chartW / (values.length - 1));
+                    // Scale value to chart height, bottom = minVal, top = maxVal
+                    var normalizedY = (v - minVal) / range;  // 0 to 1
+                    var y = h - bottom - (normalizedY * chartH); // Invert Y coordinate
+                    return x + ',' + y;
+                }).join(' ');
+                
+                // Y-axis labels with proper positioning
+                var yTickEls = '';
+                // Min value at bottom
+                yTickEls += '<text x="2" y="'+(h-bottom+3)+'" font-size="4" fill="#555">'+minVal+'</text>';
+                // Max value at top
+                yTickEls += '<text x="2" y="'+(top+4)+'" font-size="4" fill="#555">'+maxVal+'</text>';
+                
+                // X-axis labels
+                var xTickEls = '';
+                if (values.length > 1) {
+                    var oldestLabel = '-' + (values.length-1) + 'hr';
+                    // Position labels under the axis line
+                    xTickEls += '<text x="'+left+'" y="'+(h-1)+'" font-size="4" fill="#555" text-anchor="start">'+oldestLabel+'</text>';
+                    xTickEls += '<text x="'+(w-right)+'" y="'+(h-1)+'" font-size="4" fill="#555" text-anchor="end">Now</text>';
+                }
+                
+                // Draw axis lines
+                var axisLines = '<line x1="'+left+'" y1="'+top+'" x2="'+left+'" y2="'+(h-bottom)+'" stroke="#aaa" stroke-width="0.3" />' +
+                    '<line x1="'+left+'" y1="'+(h-bottom)+'" x2="'+(w-right)+'" y2="'+(h-bottom)+'" stroke="#aaa" stroke-width="0.3" />';
+                
+                // Generate hover points and tooltips
+                var hoverPoints = '';
+                var pointsArr = points.split(' ');
+                values.forEach(function(v, i) {
+                    var xy = pointsArr[i].split(',');
+                    var x = parseFloat(xy[0]);
+                    var y = parseFloat(xy[1]);
+                    // Create invisible larger circle for better hover area
+                    hoverPoints += '<g>';
+                    hoverPoints += '<circle cx="'+x+'" cy="'+y+'" r="3" fill="transparent" class="hover-area">';
+                    hoverPoints += '<title>AQI: '+Math.round(v)+'</title>';
+                    hoverPoints += '</circle>';
+                    // Visible small point
+                    hoverPoints += '<circle cx="'+x+'" cy="'+y+'" r="0.8" fill="#555" class="point"/>';
+                    hoverPoints += '</g>';
+                });
+
+                // Assemble SVG with hover points and add styles
+                var path = '<svg class="aqi-sparkline" viewBox="0 0 '+w+' '+h+'" preserveAspectRatio="none" width="100%" height="'+h+'">';
+                path += '<style>';
+                path += '.hover-area:hover { cursor: pointer; }';
+                path += '.hover-area:hover + .point { r: 1.5; fill: #000; }';
+                path += '</style>';
+                path += axisLines;
+                path += '<polyline points="'+points+'" fill="none" stroke="#555" stroke-width="0.5" stroke-linejoin="round" stroke-linecap="round" />';
+                path += hoverPoints;
+                path += yTickEls;
+                path += xTickEls;
+                path += '</svg>';
+                return path;
+            }
+
+            var layer_AQ_Stations = L.markerClusterGroup({chunkedLoading:true});
+            var stationsIndex = {};
+
+            function shouldShowLabel() {
+                try { return map.getZoom() >= 7; } catch(e) { return false; }
+            }
+
+            function createIcon(aqi, small) {
+                var color = aqiColor(aqi);
+                var cls = 'aqi-marker' + (small ? ' small' : '');
+                var text = (aqi == null || isNaN(aqi)) ? '' : String(aqi);
+                var html = '<div class="' + cls + '" style="background:' + color + '">' + (small ? '' : text) + '</div>';
+                return L.divIcon({html: html, className: 'aqi-div-icon', iconSize: small ? [14,14] : [22,22], iconAnchor: [11,11]});
+            }
+
+            function debounce(fn, wait) {
+                var t;
+                return function() {
+                    var args = arguments;
+                    clearTimeout(t);
+                    t = setTimeout(function() {
+                        fn.apply(null, args);
+                    }, wait || 700);
+                };
+            }
+
+            function fetchStationsForBounds(bounds) {
+                if (!bounds) return;
+                var sw = bounds.getSouthWest();
+                var ne = bounds.getNorthEast();
+                var minLat = sw.lat, minLon = sw.lng, maxLat = ne.lat, maxLon = ne.lng;
+                var url = 'https://api.waqi.info/map/bounds/?token='+WAQI_TOKEN+'&latlng=' + [minLat,minLon,maxLat,maxLon].join(',');
+                fetch(url).then(function(r){ return r.json(); }).then(function(json){
+                    if (!json || json.status !== 'ok' || !json.data) return;
+                    json.data.forEach(function(item){
+                        var lat = item.lat || (item.station && item.station.geo && item.station.geo[0]);
+                        var lon = item.lon || (item.station && item.station.geo && item.station.geo[1]);
+                        var uid = item.uid || (item.station && item.station.uid) || (item.aqi && item.aqi.uid);
+                        var name = (item.station && item.station.name) || item.name || ('Station ' + (uid||''));
+                        var aqi = item.aqi;
+                        if (lat == null || lon == null) return;
+                        var key = uid || (lat + ',' + lon);
+                        if (stationsIndex[key]) {
+                            var marker = stationsIndex[key];
+                            marker.options.aqi = aqi;
+                            marker.options.name = name;
+                            var small = !shouldShowLabel();
+                            marker.setIcon(createIcon(aqi, small));
+                        } else {
+                            var small = !shouldShowLabel();
+                            var marker = L.marker([lat, lon], {
+                                icon: createIcon(aqi, small)
+                            });
+                            marker.options.uid = uid;
+                            marker.options.aqi = aqi;
+                            marker.options.name = name;
+                            marker.bindPopup('<div>Loading AQI details...</div>');
+                            marker.on('popupopen', function(e){
+                                loadStationDetails(marker);
+                            });
+                            layer_AQ_Stations.addLayer(marker);
+                            stationsIndex[key] = marker;
+                        }
+                    });
+                }).catch(function(err){
+                    console.warn('WAQI bounds fetch failed', err);
+                });
+            }
+
+            function loadStationDetails(marker) {
+                var uid = marker.options.uid;
+                var latlng = marker.getLatLng();
+                var feedUrl = null;
+                if (uid) {
+                    feedUrl = 'https://api.waqi.info/feed/@' + encodeURIComponent(uid) + '/?token=' + WAQI_TOKEN;
+                } else {
+                    feedUrl = 'https://api.waqi.info/feed/geo:' + latlng.lat + ';' + latlng.lng + '/?token=' + WAQI_TOKEN;
+                }
+                fetch(feedUrl).then(function(r){ return r.json(); }).then(function(json){
+                    if (!json || json.status !== 'ok' || !json.data) {
+                        marker.setPopupContent('<div>Details unavailable</div>');
+                        return;
+                    }
+                    var d = json.data;
+                    var aqi = d.aqi;
+                    var o3 = (d.iaqi && d.iaqi.o3 && d.iaqi.o3.v) ? d.iaqi.o3.v : 'n/a';
+                    var no2 = (d.iaqi && d.iaqi.no2 && d.iaqi.no2.v) ? d.iaqi.no2.v : 'n/a';
+                    var pm25 = (d.iaqi && d.iaqi.pm25 && d.iaqi.pm25.v) ? d.iaqi.pm25.v : 'n/a';
+                    
+                    // Get current AQI and historical data
+                    var currentAQI = parseInt(aqi) || 0;
+                    var history = [];
+
+                    // Get forecast data if available
+                    if (d.forecast && d.forecast.daily && d.forecast.daily.pm25) {
+                        // Get only past values, not future forecasts
+                        history = d.forecast.daily.pm25
+                            .filter(function(it) { 
+                                return (it.avg || it.v) && it.day && new Date(it.day) <= new Date();
+                            })
+                            .map(function(it) { 
+                                return it.avg || it.v;
+                            });
+                    }
+
+                    // Ensure current AQI is the last value in history
+                    if (currentAQI > 0) {
+                        if (history.length > 0) {
+                            history[history.length - 1] = currentAQI;
+                        } else {
+                            history = [currentAQI];
+                        }
+                    }
+                    
+                    var color = aqiColor(aqi);
+                    var sparkline = history.length > 1 ? makeSparklineSVG(history, 120, 30) : '';
+                    
+                    var popupHtml = '<div class="aqi-popup">' +
+                        '<b>' + (d.city ? d.city.name : marker.options.name || 'Station') + '</b><br/>' +
+                        '<table class="aqi-popup-table">' +
+                        '<tr><td><b>AQI</b></td><td style="color:' + color + '">' + (aqi || 'n/a') + '</td></tr>' +
+                        '<tr><td>PM2.5</td><td>' + pm25 + '</td></tr>' +
+                        '<tr><td>O3 (ppb)</td><td>' + o3 + '</td></tr>' +
+                        '<tr><td>NO2 (ppb)</td><td>' + no2 + '</td></tr>' +
+                        '</table>' +
+                        sparkline +
+                        '</div>';
+                    marker.setPopupContent(popupHtml);
+                }).catch(function(err){
+                    console.error('Error loading station details:', err);
+                    marker.setPopupContent('<div>Error loading details. Please try again.</div>');
+                });
+            }
+
+            var debouncedFetch = debounce(function() {
+                if (!document.getElementById('aqiCheckbox').checked) return;
+                fetchStationsForBounds(map.getBounds());
+            }, 900);
+
+            var aqiCheckbox = document.getElementById('aqiCheckbox');
+            if (aqiCheckbox) {
+                aqiCheckbox.addEventListener('change', function(e){
+                    if (e.target.checked) {
+                        map.addLayer(layer_AQ_Stations);
+                        fetchStationsForBounds(map.getBounds());
+                        map.on('moveend zoomend', debouncedFetch);
+                        map.on('zoomend', function(){
+                            var show = shouldShowLabel();
+                            Object.keys(stationsIndex).forEach(function(k){
+                                var m = stationsIndex[k];
+                                if (m && m.options) {
+                                    m.setIcon(createIcon(m.options.aqi, !show));
+                                }
+                            });
+                        });
+                    } else {
+                        if (map.hasLayer(layer_AQ_Stations)) map.removeLayer(layer_AQ_Stations);
+                        map.off('moveend zoomend', debouncedFetch);
+                        map.off('zoomend');
+                    }
+                });
+            }
+
+            window._aqiLayer = layer_AQ_Stations;
+        })();
+        </script>
+    </body>
+</html>
