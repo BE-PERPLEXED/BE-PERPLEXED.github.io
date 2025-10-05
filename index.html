@@ -653,22 +653,22 @@
         // Water Quality Monitoring Implementation
         (function() {
             var waterQualityData = [
-                {id: 'BEB-01-100', name: 'Vancouver, Third Beach, Station 100', lat: 49.304444, lon: -123.157222, ecoli: 10, date: '2025-09-25 10:27', salinity: 26.9, temp: 16},
+                {id: 'BEB-01-100', name: 'Vancouver, Third Beach, Station 100', lat: 49.304444, lon: -123.157222, ecoli: "<10", date: '2025-09-25 10:27', salinity: 26.9, temp: 16},
                 {id: 'BEB-01-101', name: 'Vancouver, Third Beach, Station 101', lat: 49.303889, lon: -123.156944, ecoli: 20, date: '2025-09-25 10:30', salinity: 26.9, temp: 16},
-                {id: 'BEB-01-102', name: 'Vancouver, Third Beach, Station 102', lat: 49.303333, lon: -123.156667, ecoli: 10, date: '2025-09-25 10:33', salinity: 26.8, temp: 15},
-                {id: 'BEB-02-201', name: 'Vancouver, Second Beach, Station 201', lat: 49.298056, lon: -123.153889, ecoli: 10, date: '2025-09-24 08:09', salinity: 24.9, temp: 15},
-                {id: 'BEB-02-202', name: 'Vancouver, Second Beach, Station 202', lat: 49.297500, lon: -123.153611, ecoli: 10, date: '2025-09-24 08:14', salinity: 24.8, temp: 15},
+                {id: 'BEB-01-102', name: 'Vancouver, Third Beach, Station 102', lat: 49.303333, lon: -123.156667, ecoli: "<10", date: '2025-09-25 10:33', salinity: 26.8, temp: 15},
+                {id: 'BEB-02-201', name: 'Vancouver, Second Beach, Station 201', lat: 49.298056, lon: -123.153889, ecoli: "<10", date: '2025-09-24 08:09', salinity: 24.9, temp: 15},
+                {id: 'BEB-02-202', name: 'Vancouver, Second Beach, Station 202', lat: 49.297500, lon: -123.153611, ecoli: "<10", date: '2025-09-24 08:14', salinity: 24.8, temp: 15},
                 {id: 'BEB-03-303', name: 'Vancouver, English Bay Beach, Station 303', lat: 49.287222, lon: -123.143889, ecoli: 41, date: '2025-09-24 08:34', salinity: 24.7, temp: 16},
-                {id: 'BEB-03-304', name: 'Vancouver, English Bay Beach, Station 304', lat: 49.286667, lon: -123.143333, ecoli: 10, date: '2025-09-24 08:38', salinity: 24.8, temp: 16},
+                {id: 'BEB-03-304', name: 'Vancouver, English Bay Beach, Station 304', lat: 49.286667, lon: -123.143333, ecoli: "<10", date: '2025-09-24 08:38', salinity: 24.8, temp: 16},
                 {id: 'BEB-03-305', name: 'Vancouver, English Bay Beach, Station 305', lat: 49.286111, lon: -123.142778, ecoli: 20, date: '2025-09-24 08:42', salinity: 25.1, temp: 16},
-                {id: 'BEB-04-401', name: 'Vancouver, Sunset Beach, Station 401', lat: 49.279722, lon: -123.138889, ecoli: 10, date: '2025-09-24 08:55', salinity: 24.7, temp: 16},
-                {id: 'BEB-04-402', name: 'Vancouver, Sunset Beach, Station 402', lat: 49.279167, lon: -123.138333, ecoli: 10, date: '2025-09-24 09:00', salinity: 25.1, temp: 16},
-                {id: 'BEB-04-403', name: 'Vancouver, Sunset Beach, Station 403', lat: 49.278611, lon: -123.137778, ecoli: 10, date: '2025-09-24 09:06', salinity: 24.8, temp: 16},
-                {id: 'BEB-05-501', name: 'Vancouver, Kitsilano Beach, Station 501', lat: 49.276111, lon: -123.155000, ecoli: 10, date: '2025-09-24 08:18', salinity: 24.7, temp: 16},
+                {id: 'BEB-04-401', name: 'Vancouver, Sunset Beach, Station 401', lat: 49.279722, lon: -123.138889, ecoli: "<10", date: '2025-09-24 08:55', salinity: 24.7, temp: 16},
+                {id: 'BEB-04-402', name: 'Vancouver, Sunset Beach, Station 402', lat: 49.279167, lon: -123.138333, ecoli: "<10", date: '2025-09-24 09:00', salinity: 25.1, temp: 16},
+                {id: 'BEB-04-403', name: 'Vancouver, Sunset Beach, Station 403', lat: 49.278611, lon: -123.137778, ecoli: "<10", date: '2025-09-24 09:06', salinity: 24.8, temp: 16},
+                {id: 'BEB-05-501', name: 'Vancouver, Kitsilano Beach, Station 501', lat: 49.276111, lon: -123.155000, ecoli: "<10", date: '2025-09-24 08:18', salinity: 24.7, temp: 16},
                 {id: 'BEB-05-501A', name: 'Vancouver, Kitsilano Beach, Station 501A', lat: 49.275833, lon: -123.154722, ecoli: 20, date: '2025-09-24 08:22', salinity: 25.4, temp: 16},
-                {id: 'BEB-05-502', name: 'Vancouver, Kitsilano Beach, Station 502', lat: 49.275556, lon: -123.154444, ecoli: 10, date: '2025-09-24 08:26', salinity: 25.6, temp: 16},
-                {id: 'BEB-05-503', name: 'Vancouver, Kitsilano Beach, Station 503', lat: 49.275278, lon: -123.154167, ecoli: 10, date: '2025-09-24 08:29', salinity: 25.8, temp: 16},
-                {id: 'BEB-09-511', name: 'Vancouver, Kitsilano Point, Station 511', lat: 49.278333, lon: -123.148611, ecoli: 10, date: '2025-09-24 08:47', salinity: 24.6, temp: 16},
+                {id: 'BEB-05-502', name: 'Vancouver, Kitsilano Beach, Station 502', lat: 49.275556, lon: -123.154444, ecoli: "<10", date: '2025-09-24 08:26', salinity: 25.6, temp: 16},
+                {id: 'BEB-05-503', name: 'Vancouver, Kitsilano Beach, Station 503', lat: 49.275278, lon: -123.154167, ecoli: "<10", date: '2025-09-24 08:29', salinity: 25.8, temp: 16},
+                {id: 'BEB-09-511', name: 'Vancouver, Kitsilano Point, Station 511', lat: 49.278333, lon: -123.148611, ecoli: "<10", date: '2025-09-24 08:47', salinity: 24.6, temp: 16},
                 {id: 'BEB-09-512', name: 'Vancouver, Kitsilano Point, Station 512', lat: 49.277778, lon: -123.148333, ecoli: 41, date: '2025-09-24 08:52', salinity: 24.5, temp: 16},
                 {id: 'BFC-01-16', name: 'Vancouver, West False Creek, Station 16', lat: 49.274167, lon: -123.134722, ecoli: 31, date: '2025-09-24 09:10', salinity: 24.8, temp: 17},
                 {id: 'BFC-01-18', name: 'Vancouver, West False Creek, Station 18', lat: 49.273889, lon: -123.134167, ecoli: 31, date: '2025-09-24 09:28', salinity: 24.8, temp: 17},
@@ -678,14 +678,55 @@
                 {id: 'BFC-02-21', name: 'Vancouver, East False Creek, Station 21', lat: 49.273056, lon: -123.103056, ecoli: 1624, date: '2025-09-24 10:26', salinity: 24.0, temp: 17},
                 {id: 'BFC-02-22', name: 'Vancouver, East False Creek, Station 22', lat: 49.272778, lon: -123.102778, ecoli: 4884, date: '2025-09-24 10:35', salinity: 23.5, temp: 18},
                 {id: 'BFC-02-25', name: 'Vancouver, East False Creek, Station 25', lat: 49.272500, lon: -123.102500, ecoli: 414, date: '2025-09-24 10:18', salinity: 24.3, temp: 17},
-                {id: 'BFC-02-26', name: 'Vancouver, East False Creek, Station 26', lat: 49.272222, lon: -123.102222, ecoli: 256, date: '2025-09-24 10:05', salinity: 24.3, temp: 17}
+                {id: 'BFC-02-26', name: 'Vancouver, East False Creek, Station 26', lat: 49.272222, lon: -123.102222, ecoli: 256, date: '2025-09-24 10:05', salinity: 24.3, temp: 17},
+                // Jericho Beach Stations
+                {id: 'BEB-06-601', name: 'Vancouver, Jericho Beach, Station 601', lat: 49.275833, lon: -123.192500, ecoli: 31, date: '2025-09-25 09:30', salinity: 26.9, temp: 15},
+                {id: 'BEB-06-602', name: 'Vancouver, Jericho Beach, Station 602', lat: 49.275556, lon: -123.191944, ecoli: 63, date: '2025-09-25 09:22', salinity: 27.0, temp: 15},
+                {id: 'BEB-06-603', name: 'Vancouver, Jericho Beach, Station 603', lat: 49.275278, lon: -123.191389, ecoli: "<10", date: '2025-09-25 09:13', salinity: 27.4, temp: 16},
+                {id: 'BEB-06-604', name: 'Vancouver, Jericho Beach, Station 604', lat: 49.275000, lon: -123.190833, ecoli: "<10", date: '2025-09-25 09:05', salinity: 26.8, temp: 16},
+                {id: 'BEB-06-605', name: 'Vancouver, Jericho Beach, Station 605', lat: 49.274722, lon: -123.190278, ecoli: 20, date: '2025-09-25 09:02', salinity: 27.0, temp: 16},
+                {id: 'BEB-06-647', name: 'Vancouver, Jericho Beach, Station 647', lat: 49.274444, lon: -123.189722, ecoli: "<10", date: '2025-09-25 09:43', salinity: 26.4, temp: 15},
+                // Locarno Beach Stations
+                {id: 'BEB-07-701', name: 'Vancouver, Locarno Beach, Station 701', lat: 49.275556, lon: -123.200833, ecoli: 20, date: '2025-09-25 08:46', salinity: 27.2, temp: 15},
+                {id: 'BEB-07-702A', name: 'Vancouver, Locarno Beach, Station 702A', lat: 49.275278, lon: -123.200278, ecoli: 20, date: '2025-09-25 08:43', salinity: 26.9, temp: 15},
+                {id: 'BEB-07-703', name: 'Vancouver, Locarno Beach, Station 703', lat: 49.275000, lon: -123.199722, ecoli: "<10", date: '2025-09-25 08:40', salinity: 27.0, temp: 15},
+                {id: 'BEB-07-703A', name: 'Vancouver, Locarno Beach, Station 703A', lat: 49.274722, lon: -123.199167, ecoli: "<10", date: '2025-09-25 08:35', salinity: 27.3, temp: 15},
+                {id: 'BEB-07-704', name: 'Vancouver, Locarno Beach, Station 704', lat: 49.274444, lon: -123.198611, ecoli: "<10", date: '2025-09-25 08:33', salinity: 27.6, temp: 15},
+                // Spanish Banks Stations
+                {id: 'BEB-08-801', name: 'Vancouver, Spanish Banks, Station 801', lat: 49.276389, lon: -123.210833, ecoli: "<10", date: '2025-09-25 08:23', salinity: 23.4, temp: 14},
+                {id: 'BEB-08-804', name: 'Vancouver, Spanish Banks, Station 804', lat: 49.276111, lon: -123.210278, ecoli: "<10", date: '2025-09-25 07:53', salinity: 21.2, temp: 15},
+                {id: 'BEB-08-812', name: 'Vancouver, Spanish Banks, Station 812', lat: 49.275833, lon: -123.209722, ecoli: "<10", date: '2025-09-25 08:01', salinity: 22.1, temp: 15},
+                // Iona Beach Stations
+                {id: 'BIB-01-15', name: 'Richmond, Iona Beach, Station 15', lat: 49.217960, lon: -123.214600, ecoli: 41, date: '2025-09-25 07:35', salinity: 23.7, temp: 14},
+                {id: 'BIB-01-16', name: 'Richmond, Iona Beach, Station 16', lat: 49.218194, lon: -123.215278, ecoli: 31, date: '2025-09-25 07:38', salinity: 23.5, temp: 15},
+                {id: 'BIB-01-17', name: 'Richmond, Iona Beach, Station 17', lat: 49.218472, lon: -123.215972, ecoli: 30, date: '2025-09-25 07:41', salinity: 23.5, temp: 15},
+                // Spanish Banks Extension Stations
+                {id: 'BTW-01-07', name: 'Vancouver, Spanish Banks Extension, Station 7', lat: 49.276944, lon: -123.216389, ecoli: 20, date: '2025-09-25 07:45', salinity: 20.5, temp: 15},
+                {id: 'BTW-01-08', name: 'Vancouver, Spanish Banks Extension, Station 8', lat: 49.276667, lon: -123.215833, ecoli: 20, date: '2025-09-25 07:43', salinity: 20.7, temp: 15},
+                // Acadia Beach Stations
+                {id: 'BTW-02-09', name: 'UEL, Acadia Beach, Station 9', lat: 49.277778, lon: -123.235833, ecoli: 20, date: '2025-09-25 07:32', salinity: 20.7, temp: 15},
+                {id: 'BTW-02-10', name: 'UEL, Acadia Beach, Station 10', lat: 49.277500, lon: -123.235278, ecoli: 20, date: '2025-09-25 07:31', salinity: 20.4, temp: 15},
+                // Wreck Beach Stations
+                {id: 'BTW-03-21', name: 'UEL, Wreck Beach Trail 6 (Breakwater), Station 21', lat: 49.256944, lon: -123.253611, ecoli: "<10", date: '2025-09-25 09:48', salinity: 24.6, temp: 16},
+                {id: 'BTW-03-22', name: 'UEL, Wreck Beach Trail 6 (Breakwater), Station 22', lat: 49.256667, lon: -123.253056, ecoli: "<10", date: '2025-09-25 09:52', salinity: 25.3, temp: 15},
+                {id: 'BTW-03-23', name: 'UEL, Wreck Beach Trail 6 (Breakwater), Station 23', lat: 49.256389, lon: -123.252500, ecoli: 20, date: '2025-09-25 09:56', salinity: 23.7, temp: 15},
+                {id: 'BTW-03-30', name: 'UEL, Wreck Beach Trail 6 (Breakwater), Station 30', lat: 49.256111, lon: -123.251944, ecoli: "<10", date: '2025-09-25 09:59', salinity: 25.6, temp: 16},
+                {id: 'BTW-04-24', name: 'UEL, Wreck Beach Trail 4 (Towers), Station 24', lat: 49.271667, lon: -123.261667, ecoli: "<10", date: '2025-09-25 10:06', salinity: 25.3, temp: 16},
+                {id: 'BTW-04-26', name: 'UEL, Wreck Beach Trail 4 (Towers), Station 26', lat: 49.271389, lon: -123.261389, ecoli: "<10", date: '2025-09-25 10:16', salinity: 24.7, temp: 16},
+                {id: 'BTW-06-18', name: 'UEL, Wreck Beach Trail 7 (Oasis), Station 18', lat: 49.258889, lon: -123.254722, ecoli: "<10", date: '2025-09-25 09:30', salinity: 21.7, temp: 15},
+                {id: 'BTW-06-19', name: 'UEL, Wreck Beach Trail 7 (Oasis), Station 19', lat: 49.258611, lon: -123.254167, ecoli: 20, date: '2025-09-25 09:32', salinity: 19.3, temp: 15},
+                // Garry Point Stations
+                {id: 'BRG-01-21', name: 'Richmond, Garry Point, Station 21', lat: 49.127778, lon: -123.193611, ecoli: 41, date: '2025-09-25 11:51', salinity: 6.2, temp: 17},
+                {id: 'BRG-01-22', name: 'Richmond, Garry Point, Station 22', lat: 49.127500, lon: -123.193056, ecoli: "<10", date: '2025-09-25 11:54', salinity: 6.1, temp: 17},
+                {id: 'BRG-01-23', name: 'Richmond, Garry Point, Station 23', lat: 49.127222, lon: -123.192500, ecoli: 31, date: '2025-09-25 11:58', salinity: 7.3, temp: 17}
             ];
 
             function getWaterQualityColor(ecoli) {
-                if (ecoli <= 200) return '#00ff00';  // Safe
+                if (ecoli <= 200)  return '#00ff00';  // Safe
                 if (ecoli <= 400) return '#ffff00';  // Moderate
                 if (ecoli <= 1000) return '#ff9900'; // High
-                return '#ff0000';                     // Very High
+                if (ecoli <= 10000000000) return '#ff0000';// Very High, really high value to catch "greater than" cases
+                return '#00ff00';                     
             }
 
             var waterQualityLayer = L.featureGroup();
