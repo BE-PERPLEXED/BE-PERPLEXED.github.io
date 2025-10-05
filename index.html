@@ -49,16 +49,26 @@
             margin: 0;
             font-size: 24px;
         }
-        .toggle-sidebar-btn {
+        .sidebar-pull-tab {
+            position: fixed;
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%);
             background: #1abc9c;
             color: #fff;
             border: none;
-            border-radius: 4px;
-            padding: 8px 10px;
+            border-radius: 0 6px 6px 0;
+            padding: 10px 12px;
             font-size: 14px;
             cursor: pointer;
+            z-index: 1100;
+            box-shadow: 2px 2px 6px rgba(0,0,0,0.2);
         }
-        .toggle-sidebar-btn:focus {
+        /* Nudge the tab right when sidebar is open so it's attached to the edge */
+        .dashboard-container:not(.collapsed) .sidebar-pull-tab {
+            left: 300px;
+        }
+        .sidebar-pull-tab:focus {
             outline: 2px solid #fff;
             outline-offset: 2px;
         }
@@ -71,6 +81,7 @@
             overflow-y: auto;
             z-index: 900;
             transition: transform 0.25s ease, opacity 0.25s ease;
+            position: relative;
         }
         .dashboard-container.collapsed .dashboard-sidebar {
             transform: translateX(-100%);
@@ -168,7 +179,6 @@
             <header class="dashboard-header">
                 <h1>Vegetation & Air Quality Dashboard</h1>
                 <div class="header-controls">
-                    <button id="toggleSidebar" class="toggle-sidebar-btn" aria-pressed="false" aria-label="Toggle legend sidebar">Toggle Legend</button>
                 </div>
             </header>
             
@@ -247,6 +257,7 @@
                 </div>
             </aside>
 
+            <button id="sidebarPullTab" class="sidebar-pull-tab" aria-pressed="false" aria-label="Toggle legend sidebar" title="Open legend">☰</button>
             <div id="map">
             </div>
         </div>
@@ -287,18 +298,22 @@
         layer_GoogleMaps_0;
         map.addLayer(layer_GoogleMaps_0);
 
-        // Sidebar toggle logic
+        // Sidebar pull tab toggle logic
         (function(){
             var container = document.querySelector('.dashboard-container');
-            var btn = document.getElementById('toggleSidebar');
-            if (btn && container) {
-                btn.addEventListener('click', function(){
-                    container.classList.toggle('collapsed');
+            var tab = document.getElementById('sidebarPullTab');
+            if (tab && container) {
+                function updateA11y() {
                     var isCollapsed = container.classList.contains('collapsed');
-                    btn.setAttribute('aria-pressed', String(isCollapsed));
-                    // Recalculate map size after layout transition
+                    tab.setAttribute('aria-pressed', String(isCollapsed));
+                    tab.title = isCollapsed ? 'Open legend' : 'Close legend';
+                }
+                tab.addEventListener('click', function(){
+                    container.classList.toggle('collapsed');
+                    updateA11y();
                     setTimeout(function(){ try { map.invalidateSize(true); } catch(e){} }, 300);
                 });
+                updateA11y();
             }
         })();
 
